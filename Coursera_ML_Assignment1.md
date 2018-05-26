@@ -1,5 +1,5 @@
 1. Linear regression with one variable
---------------------------------------
+======================================
 
 ### 1.1 Plotting the Data
 
@@ -95,7 +95,6 @@ theta_history = gd$theta_history
 rm(gd) # remove gd
 
 # print theta to screen
-
 sprintf('Theta found by gradient descent: %.3f %.3f', theta[1], theta[2])
 ```
 
