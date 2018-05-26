@@ -9,9 +9,10 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 1. Linear regression with one variable
 
-
+# Linear regression with one variable
+```{r d}
+```
 
 ### 1.1 Plotting the Data
 ```{r plotting data}
