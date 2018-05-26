@@ -1,4 +1,5 @@
-### 1. Linear regression with one variable
+1. Linear regression with one variable
+======================================
 
 1.1 Plotting the Data
 ---------------------
@@ -24,8 +25,7 @@ plotData(X_1, y) # using plotData function
 1.2 Gradient descent
 --------------------
 
-1.2.1 Settings
-==============
+### 1.2.1 Settings
 
 ``` r
 X = cbind(rep(1, m), X_1)
@@ -37,8 +37,7 @@ iterations = 1500
 alpha = 0.01
 ```
 
-1.2.2 Computing the cost J(theta)
-=================================
+### 1.2.2 Computing the cost J(theta)
 
 ``` r
 computeCost = function(X, y, theta) {
@@ -52,19 +51,12 @@ computeCost = function(X, y, theta) {
 }
 
 # print result to screen
-cat('Cost J: ')
+sprintf('Cost J: %.3f', computeCost(X, y, theta))
 ```
 
-    ## Cost J:
+    ## [1] "Cost J: 32.073"
 
-``` r
-cat(sprintf('%.3f \n', computeCost(X, y, theta)))
-```
-
-    ## 32.073
-
-1.2.3 Setting Gradient descent algorithm
-========================================
+### 1.2.3 Setting Gradient descent algorithm
 
 ``` r
 gradientDescent = function(X, y, theta, alpha, num_iters) {
@@ -93,8 +85,7 @@ gradientDescent = function(X, y, theta, alpha, num_iters) {
 }
 ```
 
-1.2.4 Run Gradient descent algorithm
-====================================
+### 1.2.4 Run Gradient descent algorithm
 
 ``` r
 gd = gradientDescent(X, y, theta, alpha, iterations)
@@ -106,16 +97,11 @@ theta_history = gd$theta_history
 rm(gd) # remove gd
 
 # print theta to screen
-cat('Theta found by gradient descent: ')
+
+sprintf('Theta found by gradient descent: %.3f %.3f', theta[1], theta[2])
 ```
 
-    ## Theta found by gradient descent:
-
-``` r
-cat(sprintf('%.3f %.3f \n', theta[1], theta[2]))
-```
-
-    ## -3.630 1.166
+    ## [1] "Theta found by gradient descent: -3.630 1.166"
 
 ``` r
 # check whether gradient descent worked correctly 
@@ -139,23 +125,22 @@ legend("bottomright", c('Training data', 'Linear regression'), pch=c(4,NA),col=c
 ``` r
 # Predict values for population sizes of 35,000 and 70,000
 predict1 = c(1, 3.5) %*% theta
-cat(sprintf('For population = 35,000, we predict a profit of %f\n',predict1*10000))
+sprintf('For population = 35,000, we predict a profit of %f',predict1*10000)
 ```
 
-    ## For population = 35,000, we predict a profit of 4519.767868
+    ## [1] "For population = 35,000, we predict a profit of 4519.767868"
 
 ``` r
 predict2 <- c(1, 7) %*% theta
-cat(sprintf('For population = 70,000, we predict a profit of %f\n',predict2*10000))
+sprintf('For population = 70,000, we predict a profit of %f',predict2*10000)
 ```
 
-    ## For population = 70,000, we predict a profit of 45342.450129
+    ## [1] "For population = 70,000, we predict a profit of 45342.450129"
 
 1.3 Visualization
 -----------------
 
-1.3.1 Visualizing J(theta\_0, theta\_1), Surface
-================================================
+### 1.3.1 Visualizing J(theta\_0, theta\_1), Contour
 
 ``` r
 # Grid over which we will calculate J
@@ -172,36 +157,7 @@ for (i in 1 : length(theta0_vals)) {
   }
 }
 
-library(rgl) # library for plotting interactive 3d plot
-```
 
-    ## Warning: package 'rgl' was built under R version 3.4.4
-
-``` r
-open3d()
-```
-
-    ## wgl 
-    ##   1
-
-``` r
-nbcol = 100
-color = rev(rainbow(nbcol, start = 0/6, end = 4/6))
-J_vals_col = cut(J_vals, nbcol)
-
-persp3d(theta0_vals, theta1_vals, J_vals, col = color[J_vals_col],
-        xlab = expression(theta_0), ylab = expression(theta_1),
-        zlab = "Cost", main = "Gradient Descent")
-
-points3d(theta_history[, 1], theta_history[, 2], J_history + 10,
-        col = "red", size = 3.5)
-lines3d(theta_history[, 1], theta_history[, 2], J_history + 10, col = "red")
-```
-
-1.3.2 Visualizing J(theta\_0, theta\_1), Contour
-================================================
-
-``` r
 # plot J-vals as 20 countours spaced logarithmically between 0.01 and 100
 # logarithmic contours are denser near the center
 
