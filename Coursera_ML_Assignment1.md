@@ -1,8 +1,7 @@
 1. Linear regression with one variable
-======================================
+--------------------------------------
 
-1.1 Plotting the Data
----------------------
+### 1.1 Plotting the Data
 
 ``` r
 data = read.table("ex1data1.txt", sep = ',')
@@ -22,10 +21,9 @@ plotData(X_1, y) # using plotData function
 
 ![](Coursera_ML_Assignment1_files/figure-markdown_github/plotting%20data-1.png)
 
-1.2 Gradient descent
---------------------
+### 1.2 Gradient descent
 
-### 1.2.1 Settings
+#### 1.2.1 Settings
 
 ``` r
 X = cbind(rep(1, m), X_1)
@@ -37,7 +35,7 @@ iterations = 1500
 alpha = 0.01
 ```
 
-### 1.2.2 Computing the cost J(theta)
+#### 1.2.2 Computing the cost J(theta)
 
 ``` r
 computeCost = function(X, y, theta) {
@@ -56,7 +54,7 @@ sprintf('Cost J: %.3f', computeCost(X, y, theta))
 
     ## [1] "Cost J: 32.073"
 
-### 1.2.3 Setting Gradient descent algorithm
+#### 1.2.3 Setting Gradient descent algorithm
 
 ``` r
 gradientDescent = function(X, y, theta, alpha, num_iters) {
@@ -85,7 +83,7 @@ gradientDescent = function(X, y, theta, alpha, num_iters) {
 }
 ```
 
-### 1.2.4 Run Gradient descent algorithm
+#### 1.2.4 Run Gradient descent algorithm
 
 ``` r
 gd = gradientDescent(X, y, theta, alpha, iterations)
@@ -137,10 +135,9 @@ sprintf('For population = 70,000, we predict a profit of %f',predict2*10000)
 
     ## [1] "For population = 70,000, we predict a profit of 45342.450129"
 
-1.3 Visualization
------------------
+### 1.3 Visualization
 
-### 1.3.1 Visualizing J(theta\_0, theta\_1), Contour
+#### 1.3.1 Visualizing J(theta\_0, theta\_1), Contour
 
 ``` r
 # Grid over which we will calculate J

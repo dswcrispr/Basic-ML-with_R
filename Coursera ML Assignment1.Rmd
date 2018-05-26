@@ -9,9 +9,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 1. Linear regression with one variable
+## 1. Linear regression with one variable
 
-## 1.1 Plotting the Data
+### 1.1 Plotting the Data
 ```{r plotting data}
 data = read.table("ex1data1.txt", sep = ',')
 X_1 = data[, 1]
@@ -28,9 +28,9 @@ plotData = function (x, y) {
 plotData(X_1, y) # using plotData function
 ```
 
-## 1.2 Gradient descent
+### 1.2 Gradient descent
 
-### 1.2.1 Settings
+#### 1.2.1 Settings
 ``` {r gradient descent settings}
 
 X = cbind(rep(1, m), X_1)
@@ -42,7 +42,7 @@ iterations = 1500
 alpha = 0.01
 ```
 
-### 1.2.2 Computing the cost J(theta)
+#### 1.2.2 Computing the cost J(theta)
 ```{r computeCost}
 computeCost = function(X, y, theta) {
   J = 0 
@@ -58,7 +58,7 @@ computeCost = function(X, y, theta) {
 sprintf('Cost J: %.3f', computeCost(X, y, theta))
 ```
 
-### 1.2.3 Setting Gradient descent algorithm
+#### 1.2.3 Setting Gradient descent algorithm
 ```{r gradient descent}
 gradientDescent = function(X, y, theta, alpha, num_iters) {
   m = length(y)
@@ -87,7 +87,7 @@ gradientDescent = function(X, y, theta, alpha, num_iters) {
 ```
 
 
-### 1.2.4 Run Gradient descent algorithm
+#### 1.2.4 Run Gradient descent algorithm
 ```{r run gradient descent algorithm}
 gd = gradientDescent(X, y, theta, alpha, iterations)
 
@@ -122,9 +122,9 @@ sprintf('For population = 70,000, we predict a profit of %f',predict2*10000)
 ```
 
 
-## 1.3 Visualization 
+### 1.3 Visualization 
 
-### 1.3.1 Visualizing J(theta_0, theta_1), Contour
+#### 1.3.1 Visualizing J(theta_0, theta_1), Contour
 ```{r contour}
 # Grid over which we will calculate J
 theta0_vals = seq(-10, 10, length.out = 100)
