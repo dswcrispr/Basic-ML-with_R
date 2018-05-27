@@ -1,10 +1,10 @@
-Linear regression with one variable
-===================================
+Linear regression with one variableS
+====================================
 
 ### 1.1 Plotting the Data
 
 ``` r
-data = read.table("ex1data1.txt", sep = ',')
+data = read.table("data/ex1data1.txt", sep = ',')
 X_1 = data[, 1]
 y = data[, 2]
 m = length(y) # number of training examples
