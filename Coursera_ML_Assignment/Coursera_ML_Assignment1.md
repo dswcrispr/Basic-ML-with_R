@@ -1,4 +1,4 @@
-Linear regression with one variableS
+Linear regression with one variables
 ====================================
 
 ### 1.1 Plotting the Data
