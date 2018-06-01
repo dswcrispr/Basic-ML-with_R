@@ -19,7 +19,7 @@ plotData = function (x, y) {
 plotData(X_1, y) # using plotData function
 ```
 
-![](Coursera_ML_Assignment1_files/figure-markdown_github/plotting%20data-1.png)
+![](Coursera_ML_Assignment/figure-markdown_github/plotting%20data-1.png)
 
 ### 1.2 Gradient descent
 
@@ -107,7 +107,7 @@ plot(n_iter, J_history, xlab = 'n of iterations', ylab = 'Cost J',
      ylim = c(4, 7), cex = 0.1, col = "blue")
 ```
 
-![](Coursera_ML_Assignment1_files/figure-markdown_github/run%20gradient%20descent%20algorithm-1.png)
+![](Coursera_ML_Assignment/figure-markdown_github/run%20gradient%20descent%20algorithm-1.png)
 
 ``` r
 # plot the linear fit
@@ -117,7 +117,7 @@ lines(X[, 2], X %*% theta, col = "blue")
 legend("bottomright", c('Training data', 'Linear regression'), pch=c(4,NA),col=c("red","blue"), lty=c(NA,1) )
 ```
 
-![](Coursera_ML_Assignment1_files/figure-markdown_github/plotting-1.png)
+![](Coursera_ML_Assignment/figure-markdown_github/plotting-1.png)
 
 ``` r
 # Predict values for population sizes of 35,000 and 70,000
@@ -171,4 +171,4 @@ points(theta_history[, 1], theta_history[, 2], col = "red", cex = 0.2, lwd = 1, 
 lines(theta_history[, 1], theta_history[, 2], col = "red")
 ```
 
-![](Coursera_ML_Assignment1_files/figure-markdown_github/contour-1.png)
+![](Coursera_ML_Assignment/figure-markdown_github/contour-1.png)
