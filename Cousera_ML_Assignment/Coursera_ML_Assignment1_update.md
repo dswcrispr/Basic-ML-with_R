@@ -268,7 +268,8 @@ df = data.frame(n_iter = c(0:100),
 df_long = melt(df, id = "n_iter")
 ggplot(data = df_long, aes(x = n_iter, y = value, colour = variable)) +
   geom_line(size = 1) + ylim(0, 7) + xlim(0, 100) + ylab("Cost J(10^10)") +
-  xlab("number of iteration") + ggtitle("Decreasing cost J with different alpha")
+  theme(legend.title = element_blank()) +
+  xlab("number of iteration") + ggtitle("Decreasing cost J with different alpha") 
 ```
 
 ![](Coursera_ML_Assignment1_update_files/figure-markdown_github-ascii_identifiers/visualization-1.png)
