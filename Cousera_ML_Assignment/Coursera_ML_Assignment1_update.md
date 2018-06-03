@@ -244,17 +244,6 @@ sprintf('Thetas found by gradient descent: %.3f %.3f', theta[1], theta[2], theta
 ### 2.3 Visualization
 
 ``` r
-# Cost J decreasing with different alphas 
-
-alpha_0.01 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.01, iterations)$J_history
-alpha_0.03 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.03, iterations)$J_history
-alpha_0.1 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.1, iterations)$J_history
-alpha_0.3 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.3, iterations)$J_history
-
-df = data.frame(n_iter = c(0:100),
-     alpha_0.01 = alpha_0.01[1:101]/(10^10), alpha_0.03 = alpha_0.03[1:101]/(10^10),
-     alpha_0.1 = alpha_0.1[1:101]/(10^10), alpha_0.3 = alpha_0.3[1:101]/(10^10))
-
 library(ggplot2)
 library(reshape2) # to use melt function
 ```
@@ -262,6 +251,20 @@ library(reshape2) # to use melt function
     ## Warning: package 'reshape2' was built under R version 3.4.4
 
 ``` r
+# Saving J_history with different alphas to data.frame for using ggplot
+alpha_0.01 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.01, iterations)$J_history
+alpha_0.03 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.03, iterations)$J_history
+alpha_0.1 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.1, iterations)$J_history
+alpha_0.3 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.3, iterations)$J_history
+
+
+df = data.frame(n_iter = c(0:100),
+     alpha_0.01 = alpha_0.01[1:101]/(10^10),
+     alpha_0.03 = alpha_0.03[1:101]/(10^10),
+     alpha_0.1 = alpha_0.1[1:101]/(10^10),
+     alpha_0.3 = alpha_0.3[1:101]/(10^10))
+
+# use melt function to convert type     
 df_long = melt(df, id = "n_iter")
 ggplot(data = df_long, aes(x = n_iter, y = value, colour = variable)) +
   geom_line(size = 1) + ylim(0, 7) + xlim(0, 100) + ylab("Cost J(10^10)") +
