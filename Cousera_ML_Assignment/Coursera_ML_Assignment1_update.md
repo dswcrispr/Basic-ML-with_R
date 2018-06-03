@@ -1,5 +1,8 @@
-Linear regression with one variables
+Linear regression
 ================
+
+1.Linear regression with one variable
+=====================================
 
 ### 1.1 Plotting the Data
 
@@ -172,3 +175,97 @@ lines(theta_history[, 1], theta_history[, 2], col = "red")
 ```
 
 ![](Coursera_ML_Assignment1_update_files/figure-markdown_github-ascii_identifiers/contour-1.png)
+
+2.Linear regression with multiple variables
+===========================================
+
+### 2.1 Feature Normalization
+
+``` r
+data = read.table("C:/Users/user/Documents/Basic-ML-with_R/data/ex1data2.txt", sep = ',') # data loading
+
+X = data[, 1:2]
+y = data[, 3]
+m = length(y) # number of training examples
+
+featureNormalize = function(X) {
+  mu = colMeans(X) # 1 by n, n is a number of features
+  std = apply(X, 2, sd) # use apply function to get sd, '2' for columns
+  mu_matrix = rep(mu, rep.int(nrow(X), ncol(X)))
+  std_matrix = rep(std, rep.int(nrow(X), ncol(X)))
+  X_norm = (X - mu_matrix)/std_matrix
+  
+  list(X_norm = X_norm, mu = mu, std = std)
+}
+  
+X_n = featureNormalize(X)$X_norm # saving normalized x in X_n
+mu = featureNormalize(X)$mu
+std = featureNormalize(X)$std
+
+X_n = cbind(rep(1, m), X_n) # appending intercept term
+```
+
+### 2.2 Gradient Descent
+
+``` r
+X_n = as.matrix(X_n) # from data.frame to matrix
+
+# initializing fitting parameter
+theta = c(rep(0, dim(X_n)[2]))
+
+
+# some gradient descent settings
+iterations = 400
+alpha = 0.1
+
+# Computing Cost J
+computeCost(X_n, y, theta)
+```
+
+    ##             [,1]
+    ## [1,] 65591548106
+
+``` r
+# run Gradient Descent process
+gd = gradientDescent(X_n, y, theta, alpha, iterations)
+
+# form list variables into global env variables
+theta = gd$theta
+J_history = gd$J_history
+theta_history = gd$theta_history
+rm(gd) # remove gd
+
+# print theta to screen
+sprintf('Thetas found by gradient descent: %.3f %.3f', theta[1], theta[2], theta[3])
+```
+
+    ## [1] "Thetas found by gradient descent: 340412.660 110631.049"
+
+### 2.3 Visualization
+
+``` r
+# Cost J decreasing with different alphas 
+
+alpha_0.01 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.01, iterations)$J_history
+alpha_0.03 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.03, iterations)$J_history
+alpha_0.1 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.1, iterations)$J_history
+alpha_0.3 = gradientDescent(X_n, y, c(rep(0, dim(X_n)[2])), 0.3, iterations)$J_history
+
+df = data.frame(n_iter = c(0:100),
+     alpha_0.01 = alpha_0.01[1:101]/(10^10), alpha_0.03 = alpha_0.03[1:101]/(10^10),
+     alpha_0.1 = alpha_0.1[1:101]/(10^10), alpha_0.3 = alpha_0.3[1:101]/(10^10))
+
+library(ggplot2)
+library(reshape2) # to use melt function
+```
+
+    ## Warning: package 'reshape2' was built under R version 3.4.4
+
+``` r
+df_long = melt(df, id = "n_iter")
+ggplot(data = df_long, aes(x = n_iter, y = value, colour = variable)) +
+  geom_line(size = 1) + ylim(0, 7) + xlim(0, 100) + ylab("Cost J(10^10)") +
+  xlab("number of iteration") + ggtitle("Decreasing cost J with different alpha")
+```
+
+![](Coursera_ML_Assignment1_update_files/figure-markdown_github-ascii_identifiers/visualization-1.png)
