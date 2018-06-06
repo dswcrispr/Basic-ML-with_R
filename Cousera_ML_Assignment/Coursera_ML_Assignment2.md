@@ -146,7 +146,7 @@ Predict = function(X, theta) {
   m = dim(X)[1]
   p = rep(0, m)
   
-  p[(1 / (1 + exp(-X %*% theta))) >= 0.5 ] = 1
+  p[X %*% theta >= 0 ] = 1
   p
 }  
 
@@ -154,7 +154,7 @@ Predict = function(X, theta) {
 predict = Predict(X, theta)
 
 accuracy = mean(predict == y) * 100
-sprintf('Train Accuracy: %f:', accuracy)
+sprintf('Train Accuracy: %.3f:', accuracy)
 ```
 
-    ## [1] "Train Accuracy: 89.000000:"
+    ## [1] "Train Accuracy: 89.000:"
