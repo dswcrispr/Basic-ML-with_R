@@ -42,24 +42,27 @@ X = as.matrix(X) # convert X to matrix from data.frame
 
 # initialize parameters
 initial_theta = c(rep(0, dim(X)[2]))
+lambda = 0 # we don't introce regularization term in this part.
 ```
 
 #### 1.2.2 Computing the cost J(theta)
 
 ``` r
-costFunction = function(X, y) {
+costFunction = function(X, y, lambda) {
   function(theta) {
     J = 0
     m = length(y)
     X_theta = X %*% theta # m by 1
     h = 1 / (1 + exp(-X_theta)) # m by 1
-    J = (t(y) %*% log(h) + t(1 - y) %*% (log(1 -h))) / (-m)
+    # [-1] syntex make vector without 1st element
+    reg_term = (t(theta[-1]) %*% theta[-1]) * (lambda / 2)
+    J = (t(y) %*% log(h) + t(1 - y) %*% (log(1 - h)) - reg_term) / (-m)
     J
   }
 }
 
 # Computing Cost J with initial_theta
-sprintf('Cost J: %.3f', costFunction(X, y)(initial_theta))
+sprintf('Cost J: %.3f', costFunction(X, y, lambda)(initial_theta))
 ```
 
     ## [1] "Cost J: 0.693"
@@ -67,18 +70,20 @@ sprintf('Cost J: %.3f', costFunction(X, y)(initial_theta))
 #### 1.2.3 Computing Gradient for optimization
 
 ``` r
-computeGradient = function(X, y) {
+computeGradient = function(X, y, lambda) {
   function(theta) {
     gradient = c(rep(0, dim(X)[2]))
     m = length(y)
     X_theta = X %*% theta
     h = 1 / (1 + exp(-X_theta))
     gradient = (t(X) %*% (h - y)) / m
+    gradient_w_regular = gradient[-1] + ((lambda / m) * theta[-1])
+    gradient = c(gradient[1], gradient_w_regular)
     gradient
   }
 }
 
-gradient = computeGradient(X, y)(initial_theta)
+gradient = computeGradient(X, y, lambda)(initial_theta)
 
 # Computing gradient with initial_theta
 sprintf('gradient: %.3f, %.3f, %.3f: ', gradient[1], gradient[2], gradient[3])
@@ -93,8 +98,9 @@ Learning parameters using advanced optimization algorithm In this exercise, use 
 ``` r
 # Run optim to obtain the optimal theta
 # This function will return theta and the cost
-optimResult = optim(par = initial_theta, fn =  costFunction(X, y),
-                 gr = computeGradient(X, y), 
+optimResult = optim(par = initial_theta,
+                 fn =  costFunction(X, y, lambda),
+                 gr = computeGradient(X, y, lambda), 
                  method = "BFGS", control = list(maxit = 400))
 # maxit is maximum iteration
 
@@ -158,3 +164,8 @@ sprintf('Train Accuracy: %.3f:', accuracy)
 ```
 
     ## [1] "Train Accuracy: 89.000:"
+
+2.Regularized logistic regression
+=================================
+
+### 1.1 Visualizing the data
