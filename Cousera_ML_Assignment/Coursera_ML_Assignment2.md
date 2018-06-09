@@ -310,12 +310,17 @@ p_w_decisonboundary
 
 In this part, we get to try out different regularization parameters for the dataset to understand how regularization prevents overfitting
 
-``` r
-# Case 1
-# lambda = 1, Not too small not too large lambda
-lambda1 = 1
+#### Case 1 (Overfitting)
 
-optimRes1 = optim(par = initial_theta, fn = costFunction(X, y, lambda1), gr = computeGradient(X, y, lambda1), method = "BFGS", control = list(maxit = 400))
+lambda = 0, very small lambda
+
+``` r
+lambda1 = 0
+
+optimRes1 = optim(par = initial_theta,
+                  fn = costFunction(X, y, lambda1),
+                  gr = computeGradient(X, y, lambda1),
+                  method = "BFGS", control = list(maxit = 400))
 
 # saving result
 theta1 = optimRes1$par
@@ -325,18 +330,25 @@ boundary1 = draw_boundary(seq(-1, 1.5, length = 200),
                          seq(-0.8, 1.2, length = 200), theta1, 6)
 
 # plotting
-p_w_decisonboundary1 = p + geom_contour(data = boundary1, aes(x = u, y = v, z = z), breaks = 0.5) 
+p_w_decisonboundary1 = p +
+  geom_contour(data = boundary1, aes(x = u, y = v, z = z),
+               breaks = 0.5) 
 p_w_decisonboundary1
 ```
 
 ![](Coursera_ML_Assignment2_files/figure-markdown_github-ascii_identifiers/diffent%20lambda-1.png)
 
-``` r
-# Case 2 (Overfitting)
-# lambda = 0, very small lambda
-lambda2 = 0
+#### Case 2 (Underfitting)
 
-optimRes2 = optim(par = initial_theta, fn = costFunction(X, y, lambda2), gr = computeGradient(X, y, lambda2), method = "BFGS", control = list(maxit = 400))
+lambda = 100, very large lambda
+
+``` r
+lambda2 = 100
+
+optimRes2 = optim(par = initial_theta,
+                  fn = costFunction(X, y, lambda2),
+                  gr = computeGradient(X, y, lambda2),
+                  method = "BFGS", control = list(maxit = 400))
 
 # saving result
 theta2 = optimRes2$par
@@ -346,29 +358,10 @@ boundary2 = draw_boundary(seq(-1, 1.5, length = 200),
                          seq(-0.8, 1.2, length = 200), theta2, 6)
 
 # plotting
-p_w_decisonboundary2 = p + geom_contour(data = boundary2, aes(x = u, y = v, z = z), breaks = 0.5) 
+p_w_decisonboundary2 = p + 
+  geom_contour(data = boundary2, aes(x = u, y = v, z = z),
+               breaks = 0.5) 
 p_w_decisonboundary2
 ```
 
-![](Coursera_ML_Assignment2_files/figure-markdown_github-ascii_identifiers/diffent%20lambda-2.png)
-
-``` r
-# Case 3(Underfitting)
-# lambda = 100, very large lambda
-lambda3 = 100
-
-optimRes3 = optim(par = initial_theta, fn = costFunction(X, y, lambda3), gr = computeGradient(X, y, lambda3), method = "BFGS", control = list(maxit = 400))
-
-# saving result
-theta3 = optimRes3$par
-
-# Making 'boundary' data.frame having grid and H value
-boundary3 = draw_boundary(seq(-1, 1.5, length = 200), 
-                         seq(-0.8, 1.2, length = 200), theta3, 6)
-
-# plotting
-p_w_decisonboundary3 = p + geom_contour(data = boundary3, aes(x = u, y = v, z = z), breaks = 0.5) 
-p_w_decisonboundary3
-```
-
-![](Coursera_ML_Assignment2_files/figure-markdown_github-ascii_identifiers/diffent%20lambda-3.png)
+![](Coursera_ML_Assignment2_files/figure-markdown_github-ascii_identifiers/underfitting-1.png)
