@@ -44,7 +44,7 @@ X = as.matrix(X) # convert X to matrix from data.frame
 
 # initialize parameters
 initial_theta = c(rep(0, dim(X)[2]))
-lambda = 0 # we don't introce regularization term in this part.
+lambda = 0 # we don't introduce regularization term in this part.
 
 ```
 
@@ -156,5 +156,178 @@ sprintf('Train Accuracy: %.3f:', accuracy)
 
 # 2.Regularized logistic regression
 
-### 1.1 Visualizing the data
+### 2.1 Visualizing the data
+``` {r visualization2}
+
+# Data loading
+data = read.table("C:/Users/user/Documents/Basic-ML-with_R/data/ex2data2.txt", sep = ',')
+data_plot = data
+
+# to make ggplot represent QA(quality assurance) result
+data_plot$V3 = ifelse(data$V3 == 1, 'Accepted', 'Rejected')
+
+
+# Plotting scatter plot
+
+p = ggplot(data_plot, aes(V1, V2)) +
+  geom_point(aes(color = V3)) + ylab("Microchip Test2") +
+  xlab("Microchip Test 1") + 
+  scale_x_continuous(breaks = seq(-1, 1.5, 0.5)) +
+  scale_y_continuous(breaks = seq(-0.8, 1.2, 0.2)) + theme_bw() +
+  ggtitle("Plot of training data") +
+  theme(legend.title = element_blank(),
+        panel.grid.major.x =element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank())                         
+p
+```
+
+
+### 2.2 Feature mapping
+``` {r map featuring}
+X = data[, 1:2]
+X = as.matrix(X) # convert X to matrix from data.frame
+
+mapFeature = function(X1, X2, d) {
+  degree = d
+  
+  output = matrix(1, length(X1), 1)
+  for (i in 1:degree) {
+    for (j in 0:i) {
+      output = cbind(output, (X1^(i-j)) * (X2^j))
+    }
+  }
+  output
+}
+
+# mapping the features into all polynomial terms of x1 and x2 up to the 6th power.
+X = mapFeature(X[, 1], X[, 2], 6)
+# X has been transformed into m by 28 matrix
+y = data[, 3]
+```
+
+### 2.3 Computing Cost J
+``` {r costcompute}
+# initialize fitting parameters
+initial_theta = c(rep(0,, dim(X)[2]))
+
+# Set regularization parameter lambda to 1
+lambda = 1
+
+# Compute and display initial cost and gradient for regularized logistic
+sprintf('Cost J: %.3f', costFunction(X, y, lambda)(initial_theta))
+```
+
+### 2.4 Optimization
+``` {r optimization2}
+# Run optim to obtain the optimal theta
+# This function will return theta and the cost
+# maxit is maximum iteration
+
+optimRes = optim(par = initial_theta, fn = costFunction(X, y, lambda),
+                 gr = computeGradient(X, y, lambda), 
+                 method = "BFGS", control = list(maxit = 400))
+
+# saving result
+theta = optimRes$par
+cost = optimRes$value
+
+# Printing result
+sprintf('cost at theta found by optim: %f', cost)
+
+```
+
+### 2.5 Plotting decision boundary
+``` {r dsv}
+# Setting grid on X-Y plane and saving 'H' value on those grid 
+# for using contour function
+
+draw_boundary = function(x, y, theta, degree) {
+  # make sure length(x) & length(y) have same value
+  u = rep(x, times = length(x)) # grid setting
+  v = rep(y, each = length(y))
+  
+  library(dplyr)
+  cbind(u, v, z = NA) %>%  
+  # with '%>%' operation we don't need to make data.frame on each step
+    as.data.frame %>%
+    tbl_df %>% # convert to tbl_df
+    # mutate function adds column
+    mutate(z = 1 / (1 +  exp(-(mapFeature(u, v, degree) %*% theta)))) 
+}
+
+# Making 'boundary' data.frame having grid and H value
+boundary = draw_boundary(seq(-1, 1.5, length = 200), 
+                         seq(-0.8, 1.2, length = 200), theta, 6)
+
+# Adding contour on previous plot
+p_w_decisonboundary = p + geom_contour(data = boundary, aes(x = u, y = v, z = z), breaks = 0.5) # 'breaks' provide breakpoint z level I need
+
+p_w_decisonboundary
+```
+
+
+### 2.6 Regularization with various lambda
+In this part, we get to try out different regularization parameters for the dataset to understand how regularization prevents overfitting
+
+``` {r diffent lambda}
+# Case 1
+# lambda = 1, Not too small not too large lambda
+lambda1 = 1
+
+optimRes1 = optim(par = initial_theta, fn = costFunction(X, y, lambda1), gr = computeGradient(X, y, lambda1), method = "BFGS", control = list(maxit = 400))
+
+# saving result
+theta1 = optimRes1$par
+
+# Making 'boundary' data.frame having grid and H value
+boundary1 = draw_boundary(seq(-1, 1.5, length = 200), 
+                         seq(-0.8, 1.2, length = 200), theta1, 6)
+
+# plotting
+p_w_decisonboundary1 = p + geom_contour(data = boundary1, aes(x = u, y = v, z = z), breaks = 0.5) 
+p_w_decisonboundary1
+
+
+# Case 2 (Overfitting)
+# lambda = 0, very small lambda
+lambda2 = 0
+
+optimRes2 = optim(par = initial_theta, fn = costFunction(X, y, lambda2), gr = computeGradient(X, y, lambda2), method = "BFGS", control = list(maxit = 400))
+
+# saving result
+theta2 = optimRes2$par
+
+# Making 'boundary' data.frame having grid and H value
+boundary2 = draw_boundary(seq(-1, 1.5, length = 200), 
+                         seq(-0.8, 1.2, length = 200), theta2, 6)
+
+# plotting
+p_w_decisonboundary2 = p + geom_contour(data = boundary2, aes(x = u, y = v, z = z), breaks = 0.5) 
+p_w_decisonboundary2
+
+
+
+# Case 3(Underfitting)
+# lambda = 100, very large lambda
+lambda3 = 100
+
+optimRes3 = optim(par = initial_theta, fn = costFunction(X, y, lambda3), gr = computeGradient(X, y, lambda3), method = "BFGS", control = list(maxit = 400))
+
+# saving result
+theta3 = optimRes3$par
+
+# Making 'boundary' data.frame having grid and H value
+boundary3 = draw_boundary(seq(-1, 1.5, length = 200), 
+                         seq(-0.8, 1.2, length = 200), theta3, 6)
+
+# plotting
+p_w_decisonboundary3 = p + geom_contour(data = boundary3, aes(x = u, y = v, z = z), breaks = 0.5) 
+p_w_decisonboundary3
+```
+
+
+
+
 
