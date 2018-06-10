@@ -159,11 +159,11 @@ Predict = function(X, theta) {
 # make predict vector  
 predict = Predict(X, theta)
 
-accuracy = mean(predict == y) * 100
+accuracy = mean(predict == y) 
 sprintf('Train Accuracy: %.3f:', accuracy)
 ```
 
-    ## [1] "Train Accuracy: 89.000:"
+    ## [1] "Train Accuracy: 0.890:"
 
 2.Regularized logistic regression
 =================================
@@ -257,6 +257,16 @@ sprintf('cost at theta found by optim: %f', cost)
 
     ## [1] "cost at theta found by optim: 0.529003"
 
+``` r
+# make predict vector  
+predict = Predict(X, theta)
+
+accuracy = mean(predict == y) 
+sprintf('Train Accuracy: %.3f:', accuracy)
+```
+
+    ## [1] "Train Accuracy: 0.831:"
+
 ### 2.5 Plotting decision boundary
 
 ``` r
@@ -299,7 +309,11 @@ boundary = draw_boundary(seq(-1, 1.5, length = 200),
 
 ``` r
 # Adding contour on previous plot
-p_w_decisonboundary = p + geom_contour(data = boundary, aes(x = u, y = v, z = z), breaks = 0.5) # 'breaks' provide breakpoint z level I need
+p_w_decisonboundary = p + geom_contour(data = boundary,
+                                         aes(x = u, y = v, z = z),
+                                         breaks = 0.5) + 
+  # 'breaks' provide breakpoint z level I need
+  ggtitle(sprintf('Train accuracy %.3f with lambda = 1', accuracy))
 
 p_w_decisonboundary
 ```
@@ -325,6 +339,11 @@ optimRes1 = optim(par = initial_theta,
 # saving result
 theta1 = optimRes1$par
 
+# make predict vector  
+predict1 = Predict(X, theta1)
+
+accuracy1 = mean(predict1 == y) 
+
 # Making 'boundary' data.frame having grid and H value
 boundary1 = draw_boundary(seq(-1, 1.5, length = 200), 
                          seq(-0.8, 1.2, length = 200), theta1, 6)
@@ -332,7 +351,8 @@ boundary1 = draw_boundary(seq(-1, 1.5, length = 200),
 # plotting
 p_w_decisonboundary1 = p +
   geom_contour(data = boundary1, aes(x = u, y = v, z = z),
-               breaks = 0.5) 
+               breaks = 0.5) +
+  ggtitle(sprintf("Train accuracy %.3f with lambda = 0", accuracy1))
 p_w_decisonboundary1
 ```
 
@@ -353,6 +373,11 @@ optimRes2 = optim(par = initial_theta,
 # saving result
 theta2 = optimRes2$par
 
+# make predict vector  
+predict2 = Predict(X, theta2)
+
+accuracy2 = mean(predict2 == y) 
+
 # Making 'boundary' data.frame having grid and H value
 boundary2 = draw_boundary(seq(-1, 1.5, length = 200), 
                          seq(-0.8, 1.2, length = 200), theta2, 6)
@@ -360,7 +385,8 @@ boundary2 = draw_boundary(seq(-1, 1.5, length = 200),
 # plotting
 p_w_decisonboundary2 = p + 
   geom_contour(data = boundary2, aes(x = u, y = v, z = z),
-               breaks = 0.5) 
+               breaks = 0.5) +
+  ggtitle(sprintf("Train accuracy %.3f with lambda = 100", accuracy2))
 p_w_decisonboundary2
 ```
 
