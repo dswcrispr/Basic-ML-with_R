@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-# 1. Multi-class Classification
+# 1.Multi-class Classification
 
 ### 1.1 Visualizing the data
 
@@ -188,7 +188,7 @@ sprintf('Training set accuracy: %.3f', accuracy)
 ```
 
 
-# 2. Neural Networks
+# 2.Neural Networks
 
 Logistic regression cannot form more complex hypotheses as it is only a linear classifier.(we could add more features to logistic regression, but that can be very expensive to train.)
 

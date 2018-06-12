@@ -1,8 +1,8 @@
 Multi-class Classification and Neural Networks
 ================
 
-1. Multi-class Classification
-=============================
+1.Multi-class Classification
+============================
 
 ### 1.1 Visualizing the data
 
@@ -198,8 +198,8 @@ sprintf('Training set accuracy: %.3f', accuracy)
 
     ## [1] "Training set accuracy: 0.945"
 
-2. Neural Networks
-==================
+2.Neural Networks
+=================
 
 Logistic regression cannot form more complex hypotheses as it is only a linear classifier.(we could add more features to logistic regression, but that can be very expensive to train.)
 
@@ -277,4 +277,4 @@ pred = predict_w_nn(Theta1, Theta2, X[i, ])$pred
 sprintf('Neural Network prediction:%d (when y = %d)', pred, y[i])
 ```
 
-    ## [1] "Neural Network prediction:1 (when y = 1)"
+    ## [1] "Neural Network prediction:6 (when y = 6)"
