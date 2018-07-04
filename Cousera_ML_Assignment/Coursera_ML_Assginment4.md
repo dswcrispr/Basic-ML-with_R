@@ -222,7 +222,6 @@ backPropagation = function(X, y, s_input, s_hidden, s_output, lambda) {
     a3 = sigmoid(z3) # h_theta(X), 10 by 5000
     h = a3
     
-    dim(h)
     
     # Compute deltas
     delta_L = h - Y # 10 by 5000
@@ -285,57 +284,57 @@ optimRes = lbfgsb3_(initial_Theta, fn = cost, gr = grad,
 ```
 
     ## This problem is unconstrained.
-    ## At iteration  0  f = 7.168623
-    ## At iteration  2  f = 4.472673
-    ## At iteration  3  f = 3.256321
-    ## At iteration  4  f = 3.251599
-    ## At iteration  5  f = 3.209288
-    ## At iteration  6  f = 3.107033
-    ## At iteration  7  f = 2.924593
-    ## At iteration  8  f = 2.62217
-    ## At iteration  9  f = 2.399417
-    ## At iteration  10  f = 2.129636
-    ## At iteration  11  f = 1.907859
-    ## At iteration  12  f = 1.682113
-    ## At iteration  13  f = 1.464929
-    ## At iteration  14  f = 1.320553
-    ## At iteration  15  f = 1.272072
-    ## At iteration  16  f = 1.198552
-    ## At iteration  17  f = 1.109942
-    ## At iteration  18  f = 1.036564
-    ## At iteration  19  f = 0.9793417
-    ## At iteration  20  f = 0.9237462
-    ## At iteration  21  f = 0.8771084
-    ## At iteration  22  f = 0.8436207
-    ## At iteration  23  f = 0.7988063
-    ## At iteration  24  f = 0.7644072
-    ## At iteration  25  f = 0.7262008
-    ## At iteration  26  f = 0.7014031
-    ## At iteration  27  f = 0.671158
-    ## At iteration  28  f = 0.6578543
-    ## At iteration  29  f = 0.639856
-    ## At iteration  30  f = 0.6216033
-    ## At iteration  31  f = 0.6149811
-    ## At iteration  32  f = 0.5911755
-    ## At iteration  33  f = 0.5816274
-    ## At iteration  34  f = 0.5721621
-    ## At iteration  35  f = 0.5562345
-    ## At iteration  36  f = 0.5540125
-    ## At iteration  37  f = 0.5299709
-    ## At iteration  38  f = 0.5237799
-    ## At iteration  39  f = 0.513551
-    ## At iteration  40  f = 0.5079459
-    ## At iteration  41  f = 0.4960844
-    ## At iteration  42  f = 0.490677
-    ## At iteration  43  f = 0.485826
-    ## At iteration  44  f = 0.4774731
-    ## At iteration  45  f = 0.4718928
-    ## At iteration  46  f = 0.4655686
-    ## At iteration  47  f = 0.4617491
-    ## At iteration  48  f = 0.4562677
-    ## At iteration  49  f = 0.4535788
-    ## At iteration  50  f = 0.4447947
-    ## At iteration  51  f = 0.4422164
+    ## At iteration  0  f = 7.104293
+    ## At iteration  2  f = 4.539791
+    ## At iteration  3  f = 3.259254
+    ## At iteration  4  f = 3.248918
+    ## At iteration  5  f = 3.23784
+    ## At iteration  6  f = 3.200506
+    ## At iteration  7  f = 3.10629
+    ## At iteration  8  f = 2.967763
+    ## At iteration  9  f = 2.707767
+    ## At iteration  10  f = 2.386467
+    ## At iteration  11  f = 2.091548
+    ## At iteration  12  f = 1.993548
+    ## At iteration  13  f = 1.605859
+    ## At iteration  14  f = 1.458708
+    ## At iteration  15  f = 1.367701
+    ## At iteration  16  f = 1.275971
+    ## At iteration  17  f = 1.213982
+    ## At iteration  18  f = 1.108767
+    ## At iteration  19  f = 1.031999
+    ## At iteration  20  f = 0.9575504
+    ## At iteration  21  f = 0.9037644
+    ## At iteration  22  f = 0.8524372
+    ## At iteration  23  f = 0.808259
+    ## At iteration  24  f = 0.7725692
+    ## At iteration  25  f = 0.7397652
+    ## At iteration  26  f = 0.7056675
+    ## At iteration  27  f = 0.6736121
+    ## At iteration  28  f = 0.6578546
+    ## At iteration  29  f = 0.6437494
+    ## At iteration  30  f = 0.6333403
+    ## At iteration  31  f = 0.620184
+    ## At iteration  32  f = 0.5993106
+    ## At iteration  33  f = 0.5799055
+    ## At iteration  34  f = 0.5688968
+    ## At iteration  35  f = 0.5536555
+    ## At iteration  36  f = 0.546476
+    ## At iteration  37  f = 0.5380536
+    ## At iteration  38  f = 0.527543
+    ## At iteration  39  f = 0.520253
+    ## At iteration  40  f = 0.5122693
+    ## At iteration  41  f = 0.4994855
+    ## At iteration  42  f = 0.49519
+    ## At iteration  43  f = 0.4864901
+    ## At iteration  44  f = 0.4847197
+    ## At iteration  45  f = 0.4745508
+    ## At iteration  46  f = 0.4709927
+    ## At iteration  47  f = 0.4666307
+    ## At iteration  48  f = 0.4612564
+    ## At iteration  49  f = 0.4556317
+    ## At iteration  50  f = 0.4513274
+    ## At iteration  51  f = 0.4446493
 
 We can see Cost J decreasing as iteration goes
 
@@ -366,7 +365,7 @@ pred = prediction$pred
 sprintf('Training set accuracy: %.3f', mean(pred == y))
 ```
 
-    ## [1] "Training set accuracy: 0.964"
+    ## [1] "Training set accuracy: 0.969"
 
 To give you an idea of the network's output, you can also run through the examples one at the time to see what it is predicting.
 

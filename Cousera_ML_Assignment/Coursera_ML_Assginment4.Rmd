@@ -211,7 +211,6 @@ backPropagation = function(X, y, s_input, s_hidden, s_output, lambda) {
     a3 = sigmoid(z3) # h_theta(X), 10 by 5000
     h = a3
     
-    dim(h)
     
     # Compute deltas
     delta_L = h - Y # 10 by 5000
