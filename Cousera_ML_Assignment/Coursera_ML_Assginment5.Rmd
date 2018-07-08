@@ -60,16 +60,19 @@ p
 
 Make 'computeCost' function to compute Cost_J
 ``` {r costfunction}
-computeCost = function(X, y, theta, lambda) {
-  J = 0 
-  m = length(y)
-  h_x = X %*% theta
-  res = h_x - y
-  J = (t(res) %*% res) / (2 * m)
-  reg_term = t(theta[-1]) %*% theta[-1] * (lambda / (2 * m))
-  J = J + reg_term
-  J
+computeCost = function(X, y, lambda) {
+  function(theta) {
+    J = 0 
+    m = length(y)
+    h_x = X %*% theta
+    res = h_x - y
+    J = (t(res) %*% res) / (2 * m)
+    reg_term = t(theta[-1]) %*% theta[-1] * (lambda / (2 * m))
+    J = J + reg_term
+    J  
+  }
 }
+
 ```
 
 Initial settings
@@ -80,8 +83,246 @@ lambda = 1
 
 Compute cost_J for trainin data with initial settings
 ``` {r computation}
-cost_J = computeCost(cbind(c(rep(1, length(X))), X), y , initial_theta, lambda)
+cost_J = computeCost(cbind(c(rep(1, length(X))), X), y, lambda)(initial_theta)
 sprintf('Cost J: %.3f', cost_J)
 ```
 
+### 1.3 Regularized linear regression gradeint
+
+we use 'computeGrad' function to compute gradient for regularized linear regression.
+
+
+Make 'computeGrad' function to compute gradient
+``` {r computegrad}
+computeGrad = function(X, y,lambda) {
+  function(theta) {
+    m = length(y)
+    
+    if (is.vector(X)) {
+      X = t(X) # if input X was a vector, we should transform
+               # X to 1 by n matrix
+    }
+    
+    h_X = X %*% theta # m by 1
+    res = h_X - y # m by 1
+    grad = (t(X) %*% res) / m # n by 1
+    reg_term =  theta[-1] * (lambda / m)
+    grad = grad + reg_term # add regularization term
+    grad
+  }
+}
+```
+
+Compute gradient with initial settings and training data
+``` {r gradient}
+grad = computeGrad(cbind(c(rep(1, length(y))), X), y , lambda)(initial_theta)
+
+sprintf('Gradient for initial thetas: %.3f, %.3f', grad[1], grad[2])
+```
+
+### 1.4 Fitting linear regression
+
+Here we compute the optimal values of theta using 'optim' function Because our current implementation of linear regression is trying to fit a 2-dimensional theta, regularization will not be incredibly helpful for a theta of such low dimension.
+
+``` {r optimization}
+# setting lambda
+lambda = 0
+
+# Optimization
+optim_res = optim(par = initial_theta,
+                  fn = computeCost(cbind(c(rep(1, length(y))), X), y, lambda),
+                  gr = computeGrad(cbind(c(rep(1, length(y))), X), y, lambda),
+                  method = "BFGS", control = list(maxit = 400))
+
+# Saving result
+theta = optim_res$par
+
+# Make fitted y
+y_fitted = cbind(c(rep(1, length(y))), X) %*% theta
+```
+
+Plotting fitted line
+``` {r fitted}
+
+data_fit = as.data.frame(cbind(X, y_fitted))
+p_linear_fit = p + geom_line(data = data_fit, aes(x = X, y = y_fitted),
+                             color = 'blue')
+p_linear_fit
+```
+
+# 2.Bias V.S. Variance
+
+In this part of the exercise, we will plot training and test erros on a  learning curve to diagnose bias-variance problems.
+
+### 2.1 Learning curves
+Learning curve plots training and cross validation error as a function of training set size.
+
+First, we make 'learningCurve' function to returns a vector of errors for the training set and cross validation set.
+
+``` {r learncurve}
+learningCurve = function(X, y, Xval, yval, theta, lambda){
+  
+  m_train = length(y)
+  m_val = length(yval)
+  
+  X_w_intercept = cbind(c(rep(1, m_train)), X)
+  Xval_w_intercept = cbind(c(rep(1, m_val)), Xval)
+  
+  error_train = c(rep(0, m_train))
+  error_val = c(rep(0, m_train))
+  training_example = c(1:m_train)
+  
+  for (i in 1:m_train) {
+    
+    
+    optim_res = optim(par = theta, 
+                      fn = computeCost(X_w_intercept[1:i, ], y[1:i], lambda),
+                      gr = computeGrad(X_w_intercept[1:i, ], y[1:i], lambda),
+                      method = "BFGS", control = list(maxit = 400))
+    
+    optim_theta = optim_res$par
+    
+    error_train[i] = computeCost(X_w_intercept[1:i, ], y[1:i], 0)(optim_theta)  
+    error_val[i] = computeCost(Xval_w_intercept, yval, 0)(optim_theta)
+  }
+  
+  error = as.data.frame(cbind(training_example, error_train, error_val))
+  error
+}
+```
+
+Then, Compute error vectors with error_train and error_val
+```{r errorcomputing}
+initial_theta = c(1, 1)
+lambda = 0
+
+error = learningCurve(X, y, Xval, yval, initial_theta, lambda)
+```
+
+Display learning curve
+``` {r learncurve1}
+c = ggplot(error, aes(x = training_example)) +
+  geom_line(aes(y = error_train, color = 'Train')) +
+  geom_line(aes(y = error_val, color = "Cross Validation")) +
+  xlab(label = "Number of training examples") +
+  ylab(label = "error") + scale_x_continuous(breaks = seq(0, 12, 2)) +
+  scale_y_continuous(breaks = seq(0, 150, 50)) + theme_bw() +
+  ggtitle("Learning curve") + theme(legend.position = c(1,0.5),
+                                    legend.justification = c(1,0),
+                                    legend.title = element_blank(),
+                                    panel.grid.major.x = element_blank(),
+                                    panel.grid.minor.y = element_blank(),
+                                    panel.grid.major.y = element_blank(),
+                                    panel.grid.minor.x = element_blank())
+
+c  
+```
+
+### 2.2 Polynomial regression
+
+The problem with our linear model was that it was too simple for the data and resulted i underfitting(high bias). 
+
+In this part of the exercise, we will address this problem by adding more features.
+
+Now we will add more features using the higher powers of the existing feature x in the dataset.
+
+Use 'polyFeature' function to return X_p matrix(m by p) which contains polynomials of X as its columns.
+
+``` {r plyfeature}
+polyFeatures = function(X, p) {
+ 
+  X_p = matrix(0, length(X), p)
+  
+  for (i in 1:p) {
+    X_p[, i] = X^i
+  }
+  X_p # m by p
+}
+```
+
+### 2.3 Learning polynomial regression
+
+For this part of the exercise, you will be using a polynomial of degree 8.
+
+Note that, we need to use feature normalization. we can use 'featureNormalize' function from ex1.
+
+```{r poly}
+# Function loading
+source("C:/Users/user/Documents/Basic-ML-with_R/function/featureNormalize.R")
+
+# First, Make X_p matrix(polynomial of degree 8)
+
+p = 8
+X_p = polyFeatures(X, p)
+Xval_p = polyFeatures(Xval, p)
+
+# Normalize X_p
+X_p = featureNormalize(X_p)$X_norm
+Xval_p = featureNormalize(Xval_p)$X_norm
+```
+
+Learning parameters for training data
+``` {r learining}
+lambda = 0
+initial_thetas = c(rep(1, p + 1 ))
+
+
+optim_res_poly = optim(par = initial_thetas,
+                  fn = computeCost(cbind(c(rep(1, length(y))), X_p),
+                                   y, lambda),
+                  gr = computeGrad(cbind(c(rep(1, length(y))), X_p),
+                                   y, lambda),
+                  method = "BFGS", control = list(maxit = 400))
+
+thetas = optim_res_poly$par
+
+# Calculate fitted y
+y_fitted_poly = cbind(c(rep(1, length(y))), X_p) %*% thetas
+```
+
+Plot fitted line
+``` {r fitline}
+p_polynomial_fit = ggplot(data_train, aes(X, y)) + geom_point(color = 'red') +
+  xlab("Change in water level") + ylab("Water flowing out of the dam") +
+  scale_x_continuous(breaks = seq(-50, 40, 10)) + 
+  scale_y_continuous(breaks = seq(0, 40, 5)) + theme_bw() +
+  ggtitle("Polynomial fit, lambda = 0") +
+  theme(legend.title = element_blank(), panel.grid.major.x = element_blank(),
+        panel.grid.minor.y = element_blank() ,
+        panel.grid.major.y = element_blank() ,
+        panel.grid.minor.x = element_blank())
+  
+data_fit_poly = as.data.frame(cbind(X, y_fitted_poly))
+p_polynomial_fit = p_polynomial_fit + geom_line(data = data_fit_poly,
+                                            aes(x = X, y = y_fitted_poly),
+                                            color = 'blue')
+p_polynomial_fit
+```
+
+Display polynomial learning curve
+
+First, Compute error vectors with error_train and error_val
+
+```{r error }
+error = learningCurve(X_p, y, Xval_p, yval, initial_thetas, lambda)  
+```
+
+Display polynomial learning curve
+``` {r polycurve}
+c_poly = ggplot(error, aes(x = training_example)) +
+  geom_line(aes(y = error_train, color = 'Train')) +
+  geom_line(aes(y = error_val, color = "Cross Validation")) +
+  xlab(label = "Number of training examples") +
+  ylab(label = "error") + scale_x_continuous(breaks = seq(0, 12, 2)) +
+  scale_y_continuous(breaks = seq(0, 100, 10)) + theme_bw() +
+  ggtitle("Polynomial learning curve, lambda = 0") +
+  theme(legend.position = c(1,0.5), legend.justification = c(1,0),
+                                    legend.title = element_blank(),
+                                    panel.grid.major.x = element_blank(),
+                                    panel.grid.minor.y = element_blank(),
+                                    panel.grid.major.y = element_blank(),
+                                    panel.grid.minor.x = element_blank())
+
+c_poly  
+```
 
