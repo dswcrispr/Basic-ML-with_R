@@ -137,3 +137,157 @@ p
 ```
 
 ![](Coursera_ML_Assginment7_files/figure-markdown_github/visualization-1.png)
+
+2.Principal Component Analysis
+==============================
+
+We will first experiment with an example 2D dataset to get intuition on how PCA works and then use it on a bigger dataset of 5000 face image dataset.
+
+### 2.1 Example dataset
+
+``` r
+data = read.mat("C:/Users/user/Documents/Basic-ML-with_R/data/ex7data1.mat")
+list2env(data, .GlobalEnv)
+```
+
+    ## <environment: R_GlobalEnv>
+
+``` r
+rm(data)
+```
+
+#### 2.1.1 Visualization
+
+``` r
+example_dataset = data.frame(V1 = X[, 1], V2 = X[, 2])
+p1 = ggplot(example_dataset, aes(V1, V2)) + geom_point(color = 'blue') +
+  scale_x_continuous(breaks = seq(0, 7, 1)) + 
+  scale_y_continuous(breaks = seq(2, 8, 1)) + theme_bw() +
+  ggtitle("Example Dataset 1") +
+  theme(legend.title = element_blank(), panel.grid.major.x = element_blank() ,
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_blank())
+p1
+```
+
+![](Coursera_ML_Assginment7_files/figure-markdown_github/visu-1.png)
+
+### 2.2 Implementing PCA
+
+PCA consists of two computational steps: First, we compute the covariance matrix of the data. Second, we use 'svd' function to compute the eigenvectors. These will correspond to the principal components of variation in the data.
+
+Before using PCA, it is important to first normalize the data. we use 'featureNormalize' function that we made in EX1.
+
+#### 2.2.1 Normalize data
+
+``` r
+# Function loading
+source("C:/Users/user/Documents/Basic-ML-with_R/function/featureNormalize.R")
+
+normalization = featureNormalize(X)
+X_norm = normalization$X_norm
+```
+
+#### 2.2.2 Make 'PCA' function and implement
+
+``` r
+PCA = function(X) {
+  
+  m = dim(X)[1]
+  n = dim(X)[2]
+  
+  # Make variance-covariance matrix for X
+  v_c_matrix = (t(X) %*% X) / m
+  
+  # Eigenvalue decomposition v_c_matrix
+  eigendecomp = svd(v_c_matrix) # svd function returns the eigenvectors u,
+                                # the eigenvalues in d as a list.
+  eigendecomp
+}
+
+# Implements PCA function
+eigendecomp = PCA(X_norm)
+
+# Save the results
+principal_components = eigendecomp$u
+variation = eigendecomp$d
+
+# Show top principal component
+sprintf('Top principal component: %.3f, %.3f', principal_components[1, 1],
+        principal_components[1, 2])
+```
+
+    ## [1] "Top principal component: -0.707, -0.707"
+
+### 2.3 Dimensionality reduction with PCA
+
+We can use PCA results to reduce the feature dimension of our dataset by projecting eah example onto a lower dimensional space. In this part, we will project the example dataset into a 1-dimensional space.
+
+#### 2.3.1 Make 'projectData' function
+
+``` r
+projectData = function(X, U, K){
+  # U indicates principal components and K means desired number of dimensions
+  # to reduce.
+  
+  n = dim(X)[2] # number of features(dimensions)
+  m = dim(X)[1] # number of example
+  
+  U_reduce = U[, 1 : K] # n by K
+  Z = X %*% U_reduce # Z contains results of projection, m by K
+  Z
+}
+```
+
+#### 2.3.2 Implements projection
+
+``` r
+K = 1
+projection = projectData(X_norm, principal_components, K)
+```
+
+### 2.4 Reconstructing an approximation of the data
+
+We can approximately recover the data by projecting them back onto the original high dimensional space.
+
+#### 2.4.1 Make 'recoverData' function
+
+``` r
+recoverData = function(Z, U, K){
+ X_rec = Z %*% t(U[, 1 : K])
+ X_rec
+}
+```
+
+#### 2.4.2 Reconstruct data
+
+``` r
+recov = recoverData(projection, principal_components, K)
+```
+
+### 2.5 Visualizing the projections
+
+We can see how the projection affects the data by visualization. Note that we should use normalized dataset to see the effect of projection.
+
+``` r
+# Make data.frame for projected dataset
+projected_dataset = data.frame(V1 = recov[, 1], V2 = recov[, 2])
+
+# Make data.frame for normalized sample dataset
+n_example_dataset = data.frame(V1 = X_norm[, 1], V2 = X_norm[, 2])
+
+p2 = ggplot(n_example_dataset, aes(V1, V2)) + geom_point(color = 'blue') +
+  scale_x_continuous(breaks = seq(-4, 3, 1)) + 
+  scale_y_continuous(breaks = seq(-4, 3, 1)) + theme_bw() +
+  ggtitle("The normalized and projected data after PCA") +
+  theme(legend.title = element_blank(), panel.grid.major.x = element_blank() ,
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+p2 = p2 + geom_point(data = projected_dataset, aes(V1, V2), color = "red")
+p2
+```
+
+![](Coursera_ML_Assginment7_files/figure-markdown_github/visualizeeffect-1.png) The projection effectively only retains the information in the direction given by top principal component.
