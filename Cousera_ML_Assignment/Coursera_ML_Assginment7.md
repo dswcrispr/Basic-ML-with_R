@@ -290,4 +290,6 @@ p2 = p2 + geom_point(data = projected_dataset, aes(V1, V2), color = "red")
 p2
 ```
 
-![](Coursera_ML_Assginment7_files/figure-markdown_github/visualizeeffect-1.png) The projection effectively only retains the information in the direction given by top principal component.
+![](Coursera_ML_Assginment7_files/figure-markdown_github/visualizeeffect-1.png)
+
+The projection effectively only retains the information in the direction given by top principal component.
