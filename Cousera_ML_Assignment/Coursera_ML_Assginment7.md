@@ -411,5 +411,3 @@ par(op)
 ```
 
 From the reconstruction, we can observe that the general structure and appearance of the face are kept while the fine details are lost.
-
-PCA consists of two computational steps: First, we compute the covariance matrix of the data.
