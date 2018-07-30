@@ -293,3 +293,123 @@ p2
 ![](Coursera_ML_Assginment7_files/figure-markdown_github/visualizeeffect-1.png)
 
 The projection effectively only retains the information in the direction given by top principal component.
+
+### 2.6 Face image dataset
+
+In this part of the exercise, we will run PCA on face images to see how it can be used in practice for dimension reduction.
+
+The dataset 'ex7faces.mat' contains a dataset X of face images, each 32 by 32 in grayscale. Each row of X corresponds to one face image
+
+#### 2.6.1 Data loading and display the first 100 of these face images
+
+``` r
+data = read.mat('C:/Users/user/Documents/Basic-ML-with_R/data/ex7faces.mat')
+list2env(data, .GlobalEnv)
+```
+
+    ## <environment: R_GlobalEnv>
+
+``` r
+face = X # 5000 by 1024
+rm(data)
+```
+
+we use 'displayData1' function to display face images. special thanks to <https://github.com/faridcher>
+
+``` r
+# Function loading
+source("C:/Users/user/Documents/Basic-ML-with_R/function/displayData1.R")
+displayData1(face[1:100, ])
+```
+
+![](Coursera_ML_Assginment7_files/figure-markdown_github/displaydata1-1.png)
+
+Now, implement PCA on facedata.
+
+``` r
+# We first normalize the dataset
+normalization = featureNormalize(face) 
+face_norm = normalization$X_norm # 5000 by 1024
+```
+
+To implement PCA on large-scale dataset we make 'PCA1' function using 'svds' function in RSpectra package.
+
+``` r
+PCA1 = function(X, k) {
+  # k means the number of eigenvalues(with the largest magnitude) to calculate
+  m = dim(X)[1]
+  n = dim(X)[2]
+  
+  # Make variance-covariance matrix for X
+  v_c_matrix = (t(X) %*% X) / m
+  
+  # Eigenvalue decomposition v_c_matrix
+  eigendecomp = svds(v_c_matrix, k, nu = k, nv = k)
+  # RSpectra has the svds() function to compute Truncated SVD.
+  # It returns eigenvectors u and eigenvalues d.
+  eigendecomp
+}
+```
+
+Implement PCA on face\_norm matrix
+
+``` r
+# Loading RSpectra package to use 'svds' function in PCA1
+library(RSpectra)
+
+# Compare to 'PCA' function, 'PCA1' function has additional argument k which indicates
+# the number of eigenvalues(with the largest maginitude) to calculate.
+k = 100
+eigenface = PCA1(face_norm, k)
+
+# Save the results
+principal_components = eigenface$u # saving first 100 eigenvectors, 1024 by 100
+variances = eigenface$d # saving first 100 eigenvalues
+```
+
+Visualize the first 36 principal components that describe the largest variations
+
+``` r
+principal_36 = t(principal_components[, 1:36]) # 36 by 1024
+displayData1(principal_36)
+```
+
+![](Coursera_ML_Assginment7_files/figure-markdown_github/visulapca-1.png)
+
+#### 2.6.2 Dimensionality Reduction
+
+We can use reduce the dimension of the face dataset.
+
+Here, we project the face dataset onto only the first 100 principal components. Concretely, each face image is now described by a vector z(i) belongs to R^100.
+
+``` r
+projection_face = projectData(face_norm, principal_components, 100)
+```
+
+To understand what is lost in the dimension reduction, we can recover the data using the projected dataset.
+
+``` r
+recov_face = recoverData(projection_face, principal_components, 100)
+```
+
+Visualize an approximate recovery of the data and compare to the original data.
+
+``` r
+op = par(mfrow = c(1, 2))
+
+displayData1(face[1:100, ])
+title('Original faces')
+
+displayData1(recov_face[1:100, ])
+title(main = 'Recovered faces')
+```
+
+![](Coursera_ML_Assginment7_files/figure-markdown_github/vizucompare-1.png)
+
+``` r
+par(op)
+```
+
+From the reconstruction, we can observe that the general structure and appearance of the face are kept while the fine details are lost.
+
+PCA consists of two computational steps: First, we compute the covariance matrix of the data.
