@@ -132,9 +132,93 @@ p = ggplot(data_plot, aes(X1, X2), color = idx) + geom_point(aes(color = idx))+
 p
 ```
 
+### 1.2 Image compression with K-means
+
+
+# Here, we apply K-means to image compression.
+
+In a straightforward 24-bit color representation of an image, each pixel is represented as three 8-bit unsigned integers(ranging form 0 to 255) that specify the red, green and blue intensity values. This encoding is often refered to as the RGB encoding.
+
+Our image contains thousands of colors, and in this part of the exercise, we will reduce the number of colors to 16 colors. By making this reduction, it is possible to represent the photo in an efficient way. Specifically, we only need to store the RGB values of the 16 selected colors, and for each pixel in the image we now need to only store the index of the color at that location.
+
+In this exercise, we will use the K-means algorithm to select the 16 colors that will be used to represent the compressed image. Concretely, we will treat every pixel in the original image as a data example and use the K-means algorithm to find the 16 colors that best group(cluster) the pixels in the 3-dimensional RGB space.
+
+Once we have computed the cluster centroids on the image, we will then use the 16 colors to replace the pixels in the orginal image.
+
+#### 1.2.1 Data loading and settings
+``` {r dataloading2}
+data = read.mat("C:/Users/user/Documents/Basic-ML-with_R/data/bird_small.mat")
+list2env(data, .GlobalEnv)
+rm(data)
+
+
+
+# For example, A[50,50,3] gives the blue intensity of the pixel at row 50 and column 50.  
+A[50,50,3]
+
+# Divide by 255 so that all values are in the range 0 -1
+A = A / 255
+
+# Reshape A to create an m by 3 matrix X of pixel colors(m = 128 * 128)
+# Each row will contain the Red, Green and Bule pixel values.
+# This gives us our dataset matrix X that we will use K-means on.
+X = matrix(A, dim(A)[1] * dim(A)[2], 3)
+```
+
+
+#### 1.2.2 Run K-means algoritm
+``` {r kmeanimage}
+K = 16
+max_iters = 10
+
+# Initialize the centroids randomly first
+
+# Function loading
+source("C:/Users/user/Documents/Basic-ML-with_R/function/InitCentroids.R")
+
+initial_centroids = InitCentroids(X, K)
+
+# Implemnts K-means
+K_means = runKmeans(X, initial_centroids, K)
+
+# save results
+centroids = K_means$centroids
+idx = K_means$idx
+```
+
+After finding the top K = 16 colors to represent the image, we can now assign each pixel to its closest centroid. This allows us to represent the original image using the centroid assignments of each pixel.
+
+``` {r imagecompress}
+# Image compression
+X_recovered = centroids[idx, ] 
+
+# Reshape the recovered image into array
+X_recovered = array(X_recovered, c(128, 128, 3))
+```
+
+#### 1.2.3 Display images
+``` {r display image}
+
+# Loading 'raster' package first
+library(raster)
+
+
+# Dismplay
+op = par(mfrow = c(1, 2), mar = c(5, 4, 4, 2) + 0.1)
+
+b = brick(A)
+plotRGB(b, stretch = 'lin', asp = 2, axes = TRUE, main = "Original")
+
+b = brick(X_recovered)
+plotRGB(b, stretch = 'lin', asp = 2, axes = TRUE, main = "Compressed, with 16 colors")
+
+par(op)
+```
+Finally, we can view he effects of the compression by reconstructuring the image based only on the centroid assignments.
+
+
 
 # 2.Principal Component Analysis
-
 
 We will first experiment with an example 2D dataset to get intuition on how PCA works and then use it on a bigger dataset of 5000 face image dataset.
 
