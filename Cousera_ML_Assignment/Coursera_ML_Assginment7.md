@@ -316,7 +316,7 @@ variation = eigendecomp$d
 
 # Show top principal component
 sprintf('Top principal component: %.3f, %.3f', principal_components[1, 1],
-        principal_components[1, 2])
+        principal_components[2, 1])
 ```
 
     ## [1] "Top principal component: -0.707, -0.707"
@@ -381,6 +381,7 @@ n_example_dataset = data.frame(V1 = X_norm[, 1], V2 = X_norm[, 2])
 p2 = ggplot(n_example_dataset, aes(V1, V2)) + geom_point(color = 'blue') +
   scale_x_continuous(breaks = seq(-4, 3, 1)) + 
   scale_y_continuous(breaks = seq(-4, 3, 1)) + theme_bw() +
+  coord_fixed(ratio = 1) +
   ggtitle("The normalized and projected data after PCA") +
   theme(legend.title = element_blank(), panel.grid.major.x = element_blank() ,
         panel.grid.minor.y = element_blank(),
