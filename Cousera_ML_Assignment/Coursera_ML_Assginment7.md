@@ -141,7 +141,6 @@ p
 ### 1.2 Image compression with K-means
 
 Here, we apply K-means to image compression.
-============================================
 
 In a straightforward 24-bit color representation of an image, each pixel is represented as three 8-bit unsigned integers(ranging form 0 to 255) that specify the red, green and blue intensity values. This encoding is often refered to as the RGB encoding.
 
